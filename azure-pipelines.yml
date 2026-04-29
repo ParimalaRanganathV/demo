@@ -10,35 +10,13 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-trigger:
-  - main
-
-pool:
-  vmImage: 'ubuntu-latest'
-
-steps:
-  - checkout: self
-
-  # ✅ Install Java 17 first
-  - task: JavaToolInstaller@0
-    displayName: 'Set up Java 17'
-    inputs:
-      versionSpec: '17'
-      jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'PreInstalled'
-
-  # Verify Java version (helpful for debugging)
-  - script: java -version
-    displayName: 'Check Java version'
-
-  - task: Maven@4
-    displayName: 'Build with Maven'
-    inputs:
-      mavenPOMFile: 'pom.xml'
-      goals: 'clean package'
-      publishJUnitResults: false
-      javaHomeOption: 'JDKVersion'
-      jdkVersionOption: '17'
-
-  - script: java -jar target/hello-user.jar
-    displayName: 'Run Hello User'
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.11'
+    jdkArchitectureOption: 'x64'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    goals: 'package'
